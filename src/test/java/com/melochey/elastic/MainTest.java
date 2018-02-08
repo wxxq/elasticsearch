@@ -1,6 +1,8 @@
 package com.melochey.elastic;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -8,12 +10,12 @@ import org.junit.Test;
 
 import com.google.gson.Gson;
 import com.melochey.elastic.dao.ElasticDao;
-import com.melochey.elastic.entity.BaseField;
 import com.melochey.elastic.entity.Document;
-import com.melochey.elastic.entity.ESParam;
-import com.melochey.elastic.entity.GenerateField;
 import com.melochey.elastic.entity.Index;
-import com.melochey.elastic.entity.RangeField;
+import com.melochey.elastic.entity.ES.BaseField;
+import com.melochey.elastic.entity.ES.ESParam;
+import com.melochey.elastic.entity.ES.GenerateField;
+import com.melochey.elastic.entity.ES.RangeField;
 import com.melochey.elastic.util.ESConnector;
 import com.google.gson.Gson;
 
@@ -54,6 +56,7 @@ public class MainTest {
 		RangeField range = new RangeField("age",12,true,30,true,3);
 		//param.getFieldList().add(eskv);
 		param.getFieldList().add(range);
+		param.sortKeys.put("age", true);
 		List<Document> list = dao.query(param);
 		for (Document document : list) {
 			

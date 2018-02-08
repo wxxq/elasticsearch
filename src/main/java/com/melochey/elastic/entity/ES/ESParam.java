@@ -1,4 +1,4 @@
-package com.melochey.elastic.entity;
+package com.melochey.elastic.entity.ES;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,9 +10,9 @@ public class ESParam {
 	private int from = 0;
 	private int size = 10;
 
-	private List<BaseField> fieldList = new ArrayList<>();
+	public List<BaseField> fieldList = new ArrayList<>();
 
-	private Map<String, Boolean> sortKeys = new HashMap<>();
+	public Map<String, Boolean> sortKeys = new HashMap<>();
 
 	public int getFrom() {
 		return from;

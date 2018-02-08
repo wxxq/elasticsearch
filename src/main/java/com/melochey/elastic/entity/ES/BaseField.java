@@ -1,4 +1,4 @@
-package com.melochey.elastic.entity;
+package com.melochey.elastic.entity.ES;
 
 public class BaseField {
 	
