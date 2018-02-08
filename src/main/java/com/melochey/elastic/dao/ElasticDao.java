@@ -128,7 +128,7 @@ public class ElasticDao {
 		searchSourceBuilder.size(size);
 		searchSourceBuilder.query(boolQuery);
 		SearchRequest searchRequest = new SearchRequest(index.getName());
-		searchRequest.source(sourceBuilder);
+		searchRequest.source(searchSourceBuilder);
 		SearchResponse searchResponse = null;
 		try {
 			searchResponse = client.search(searchRequest);
