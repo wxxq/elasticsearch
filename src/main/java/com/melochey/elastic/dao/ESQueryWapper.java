@@ -17,7 +17,6 @@ import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 
-import com.google.gson.Gson;
 import com.melochey.elastic.entity.Index;
 import com.melochey.elastic.entity.ES.BaseField;
 import com.melochey.elastic.entity.ES.ESParam;
@@ -27,16 +26,13 @@ import com.melochey.elastic.entity.ES.RangeField;
 public class ESQueryWapper<T> {
 	private Index index;
 	private final RestHighLevelClient client;
-	private Gson gson;
 
-	public ESQueryWapper(RestHighLevelClient client, SearchSourceBuilder searchSourceBuilder, Index index, Gson gson) {
+	public ESQueryWapper(RestHighLevelClient client, Index index) {
 		this.client = client;
 		this.index = index;
-		this.gson = gson;
 	}
-	
-	public List<T> query(ESParam param) {
-		List<T> result = new ArrayList<>();
+
+	public SearchHit[] query(ESParam param) {
 		BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
 		List<BaseField> fieldList = param.getFieldList();
 		for (BaseField eskv : fieldList) {
@@ -53,32 +49,32 @@ public class ESQueryWapper<T> {
 		}
 		int from = param.getFrom();
 		int size = param.getSize();
-		
+
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		for (String itemField : param.searchedFields) {
+			searchSourceBuilder.docValueField(itemField);
+		}
 		searchSourceBuilder.from(from);
 		searchSourceBuilder.size(size);
 		// 传入 查询参数
 		searchSourceBuilder.query(boolQuery);
 		// 排序
-		for(String key :param.sortKeys.keySet()){
-			FieldSortBuilder fieldSort = SortBuilders.fieldSort(key).order(param.sortKeys.get(key)?SortOrder.ASC:SortOrder.DESC);
+		for (String key : param.sortKeys.keySet()) {
+			FieldSortBuilder fieldSort = SortBuilders.fieldSort(key)
+					.order(param.sortKeys.get(key) ? SortOrder.ASC : SortOrder.DESC);
 			searchSourceBuilder.sort(fieldSort);
 		}
 		SearchRequest searchRequest = new SearchRequest(index.getName());
 		searchRequest.source(searchSourceBuilder);
 		SearchResponse searchResponse = null;
+		SearchHit[] searchHits = null;
 		try {
 			searchResponse = client.search(searchRequest);
 			SearchHits hits = searchResponse.getHits();
-			SearchHit[] searchHits = hits.getHits();
-			for (SearchHit hit : searchHits) {
-				T doc = gson.fromJson(hit.getSourceAsString(), T.class);
-				doc.setId(hit.getId());
-				result.add(doc);
-			}
+			searchHits = hits.getHits();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return result;
+		return searchHits;
 	}
 }

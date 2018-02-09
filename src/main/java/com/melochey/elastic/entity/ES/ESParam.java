@@ -13,6 +13,8 @@ public class ESParam {
 	public List<BaseField> fieldList = new ArrayList<>();
 
 	public Map<String, Boolean> sortKeys = new HashMap<>();
+	
+	public List<String> searchedFields = new ArrayList<>();
 
 	public int getFrom() {
 		return from;
