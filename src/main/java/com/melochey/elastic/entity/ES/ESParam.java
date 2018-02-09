@@ -14,7 +14,7 @@ public class ESParam {
 
 	public Map<String, Boolean> sortKeys = new HashMap<>();
 	
-	public List<String> searchedFields = new ArrayList<>();
+	public String[] searchedFields;
 
 	public int getFrom() {
 		return from;

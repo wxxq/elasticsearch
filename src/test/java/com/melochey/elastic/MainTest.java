@@ -25,9 +25,9 @@ public class MainTest {
 	Gson gson = new Gson();
 	ElasticDao dao = new ElasticDao(ESConnector.getClient(), sourceBuilder, index, gson);
 
-	//@Test
+	@Test
 	public void initData() {
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 1000; i++) {
 			Document document = new Document();
 			Random random = new Random();
 			int randNum = random.nextInt(10000);
@@ -49,7 +49,7 @@ public class MainTest {
 		System.out.println(result);
 	}
 	
-	@Test	
+	//@Test	
 	public void query(){
 		ESParam param = new ESParam();
 		//GenerateField eskv = new GenerateField("firstname","melo2",2);
