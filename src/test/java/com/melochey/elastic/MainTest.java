@@ -57,6 +57,7 @@ public class MainTest {
 		//param.getFieldList().add(eskv);
 		param.getFieldList().add(range);
 		param.sortKeys.put("age", true);
+		param.sortKeys.put("height", false);
 		List<Document> list = dao.query(param);
 		for (Document document : list) {
 			
