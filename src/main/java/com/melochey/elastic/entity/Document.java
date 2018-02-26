@@ -7,12 +7,12 @@ public class Document {
     private String message;
     private int age;
     private int height;
-	private String category;
-	private String school;
     private int province_id;
     private int city_id;
     private double money;
 
+    private String category;
+    private String school;
 	public String getFirstname() {
 		return firstname;
 	}
@@ -79,4 +79,5 @@ public class Document {
 	public void setCity_id(int city_id) {
 		this.city_id = city_id;
 	}
+
 }
