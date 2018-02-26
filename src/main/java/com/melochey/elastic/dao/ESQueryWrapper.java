@@ -195,30 +195,32 @@ public class ESQueryWrapper<T> {
 				curAggregation = itemAggregation;
 			}
 			if (param.aggregationMetrics != null) {
-				Map<String, ESMetrics> metrics = param.aggregationMetrics;
+				Map<String, ESMetrics[]> metrics = param.aggregationMetrics;
 				for (String f : metrics.keySet()) {
-					ESMetrics metric = metrics.get(f);
-					switch (metric) {
-					case MAX:
-						MaxAggregationBuilder maxAggregationBuilder = AggregationBuilders.max("max_" + f).field(f);
-						curAggregation.subAggregation(maxAggregationBuilder);
-						break;
-					case AVG:
-						AvgAggregationBuilder avgAggregationBuilder = AggregationBuilders.avg("avg_" + f).field(f);
-						curAggregation.subAggregation(avgAggregationBuilder);
-						break;
-					case SUM:
-						SumAggregationBuilder sumAggregationBuilder = AggregationBuilders.sum("sum_" + f).field(f);
-						curAggregation.subAggregation(sumAggregationBuilder);
-						break;
-					case MIN:
-						MinAggregationBuilder minAggregationBuilder = AggregationBuilders.min("min_" + f).field(f);
-						curAggregation.subAggregation(minAggregationBuilder);
-						break;
+					ESMetrics[] metricArray = metrics.get(f);
+					for(int i=0;i<metricArray.length;i++){
+						switch (metricArray[i]) {
+						case MAX:
+							MaxAggregationBuilder maxAggregationBuilder = AggregationBuilders.max("max_" + f).field(f);
+							curAggregation.subAggregation(maxAggregationBuilder);
+							break;
+						case AVG:
+							AvgAggregationBuilder avgAggregationBuilder = AggregationBuilders.avg("avg_" + f).field(f);
+							curAggregation.subAggregation(avgAggregationBuilder);
+							break;
+						case SUM:
+							SumAggregationBuilder sumAggregationBuilder = AggregationBuilders.sum("sum_" + f).field(f);
+							curAggregation.subAggregation(sumAggregationBuilder);
+							break;
+						case MIN:
+							MinAggregationBuilder minAggregationBuilder = AggregationBuilders.min("min_" + f).field(f);
+							curAggregation.subAggregation(minAggregationBuilder);
+							break;
+						}
 					}
 				}
 			}
-			searchSourceBuilder.aggregation(curAggregation);
+			searchSourceBuilder.aggregation(bootAggregation);
 		}
 	}
 

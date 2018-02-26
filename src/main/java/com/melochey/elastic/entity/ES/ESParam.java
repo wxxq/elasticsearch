@@ -21,7 +21,7 @@ public class ESParam {
 	public List<String> aggregationFields;
 	
 	// key:field name  value:metric value
-	public Map<String,ESMetrics> aggregationMetrics;
+	public Map<String,ESMetrics[]> aggregationMetrics;
 	
 	public int getFrom() {
 		return from;
