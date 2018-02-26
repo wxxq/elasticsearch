@@ -25,6 +25,17 @@ public class MainTest {
 	Gson gson = new Gson();
 	ElasticDao dao = new ElasticDao(ESConnector.getClient(), sourceBuilder, index, gson);
 
+
+    public static double nextDouble(final double min, final double max)  {
+        if (max < min) {
+            return 0.0;
+        }
+        if (min == max) {
+            return min;
+        }
+        return min + ((max - min) * new Random().nextDouble());
+    }
+
 	@Test
 	public void initData() {
 		String[] categorys = new String[]{"class1","class2","class3","class4","class5"};
@@ -40,6 +51,9 @@ public class MainTest {
 			document.setMessage("test value");
 			document.setAge(random.nextInt(100));
 			document.setHeight(random.nextInt(200));
+			document.setProvince_id(random.nextInt(33));
+			document.setCity_id(random.nextInt(330));
+			document.setMoney(MainTest.nextDouble(0.0, 100000.0));
 			dao.createIndex(index, document);
 		}
 
