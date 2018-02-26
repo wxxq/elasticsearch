@@ -4,7 +4,7 @@ public class GenerateField extends BaseField {
 
 	private Object fieldValue;
 
-	public GenerateField(String fieldName, Object fieldValue, int flag) {
+	public GenerateField(String fieldName, Object fieldValue, ESQueryType flag) {
 		this.fieldName = fieldName;
 		this.fieldValue = fieldValue;
 		this.flag = flag;
@@ -26,12 +26,5 @@ public class GenerateField extends BaseField {
 		this.fieldValue = fieldValue;
 	}
 
-	public int getFlag() {
-		return flag;
-	}
-
-	public void setFlag(int flag) {
-		this.flag = flag;
-	}
 
 }

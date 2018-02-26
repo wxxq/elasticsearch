@@ -4,10 +4,8 @@ public class BaseField {
 	
 	public String fieldName;
 
-
-
 	// 0 termQuery 1 matchQuery 2 rangeQuery
-	public int flag;
+	public ESQueryType flag;
 
 	public String getFieldName() {
 		return fieldName;
@@ -17,13 +15,5 @@ public class BaseField {
 		this.fieldName = fieldName;
 	}
 
-
-
-	public int getFlag() {
-		return flag;
-	}
-
-	public void setFlag(int flag) {
-		this.flag = flag;
-	}
+	
 }

@@ -6,12 +6,16 @@ import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 
 public class ESConnector {
+	//192.168.133.130
+	public final static String SERVER_IP = "172.16.24.208";
+	
+	public final static int SERVER_PORT = 9200;
 	
 	private ESConnector(){
 	}
 	
 	private static class SingleBuilderHolder{
-		private final static RestClientBuilder builder = RestClient.builder(new HttpHost("172.16.24.207", 9200, "http"));
+		private final static RestClientBuilder builder = RestClient.builder(new HttpHost(SERVER_IP,SERVER_PORT, "http"));
 	}
 	
 	
