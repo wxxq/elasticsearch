@@ -7,13 +7,17 @@ public class ESParam {
 
 	private int from = 0;
 	private int size = 10;
-
+	
+	// query condition
 	public List<BaseField> fieldList ;
-
+	
+	// need sorted field
 	public Map<String, Boolean> sortKeys;
 	
+	// displayed fields
 	public String[] searchedFields;
 	
+	// group by fields
 	public List<String> aggregationFields;
 	
 	// key:field name  value:metric value

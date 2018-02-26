@@ -28,13 +28,15 @@ public class MainTest {
 	@Test
 	public void initData() {
 		String[] categorys = new String[]{"class1","class2","class3","class4","class5"};
+		String[] school = new String[]{"school1","school2","school3","school4","school5","school6"};
 		for (int i = 0; i < 1000; i++) {
 			Document document = new Document();
 			Random random = new Random();
-			int randNum = random.nextInt(10000);
+			int randNum = random.nextInt(1000);
 			document.setFirstname("melo" + randNum);
 			document.setLastname("sdf" + randNum);
 			document.setCategory(categorys[random.nextInt(5)]);
+			document.setSchool(school[random.nextInt(6)]);
 			document.setMessage("test value");
 			document.setAge(random.nextInt(100));
 			document.setHeight(random.nextInt(200));
@@ -51,19 +53,5 @@ public class MainTest {
 		System.out.println(result);
 	}
 	
-	//@Test	
-	public void query(){
-		ESParam param = new ESParam();
-		//GenerateField eskv = new GenerateField("firstname","melo2",2);
-		RangeField range = new RangeField("age",12,true,30,true,3);
-		//param.getFieldList().add(eskv);
-		param.getFieldList().add(range);
-		param.sortKeys.put("age", true);
-		param.sortKeys.put("height", false);
-		List<Document> list = dao.query(param);
-		for (Document document : list) {
-			
-			System.out.println(gson.toJson(document));
-		}
-	}
+
 }

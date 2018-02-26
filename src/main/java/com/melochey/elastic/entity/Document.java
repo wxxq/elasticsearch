@@ -8,6 +8,7 @@ public class Document {
     private int age;
     private int height;
     private String category;
+    private String school;
 	public String getFirstname() {
 		return firstname;
 	}
@@ -49,6 +50,12 @@ public class Document {
 	}
 	public void setCategory(String category) {
 		this.category = category;
+	}
+	public String getSchool() {
+		return school;
+	}
+	public void setSchool(String school) {
+		this.school = school;
 	}
 	
 }
