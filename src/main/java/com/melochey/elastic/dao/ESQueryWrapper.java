@@ -22,8 +22,10 @@ import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilde
 import org.elasticsearch.search.aggregations.metrics.avg.Avg;
 import org.elasticsearch.search.aggregations.metrics.avg.AvgAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.avg.AvgAggregator;
+import org.elasticsearch.search.aggregations.metrics.cardinality.CardinalityAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.max.MaxAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.min.MinAggregationBuilder;
+import org.elasticsearch.search.aggregations.metrics.stats.StatsAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.elasticsearch.search.aggregations.metrics.sum.SumAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.sum.SumAggregator;
@@ -191,6 +193,7 @@ public class ESQueryWrapper<T> {
 			for (int i = 1; i < fields.size(); i++) {
 				TermsAggregationBuilder itemAggregation = AggregationBuilders.terms("term_" + fields.get(i))
 						.field(fields.get(i));
+				//itemAggregation.size(100);
 				curAggregation.subAggregation(itemAggregation);
 				curAggregation = itemAggregation;
 			}
@@ -216,6 +219,13 @@ public class ESQueryWrapper<T> {
 							MinAggregationBuilder minAggregationBuilder = AggregationBuilders.min("min_" + f).field(f);
 							curAggregation.subAggregation(minAggregationBuilder);
 							break;
+						case CARDINALITY:
+							CardinalityAggregationBuilder cardinalityAggregationBuilder = AggregationBuilders.cardinality("cardinality_"+f).field(f);
+							curAggregation.subAggregation(cardinalityAggregationBuilder);
+							break;
+						case STATS:
+							StatsAggregationBuilder statsAggregationBuilder = AggregationBuilders.stats("stats_"+f).field(f);
+							curAggregation.subAggregation(statsAggregationBuilder);
 						}
 					}
 				}

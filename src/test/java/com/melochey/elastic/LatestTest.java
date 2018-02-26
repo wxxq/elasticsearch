@@ -52,7 +52,7 @@ public class LatestTest {
 		param.aggregationFields.add("school");
 		param.aggregationFields.add("category");
 		param.aggregationMetrics = new HashMap<String, ESMetrics[]>();
-		ESMetrics[] metrics = {ESMetrics.MAX,ESMetrics.MIN};
+		ESMetrics[] metrics = {ESMetrics.MAX,ESMetrics.MIN,ESMetrics.CARDINALITY};
 		param.aggregationMetrics.put("age", metrics);
 		SearchResponse response = dao.commonQuery(param);
 		Aggregations aggregations = response.getAggregations();
@@ -71,6 +71,7 @@ public class LatestTest {
 				Min minAge=bucket2.getAggregations().get("min_age");
 				String formated=format("current_class:%s,class_total_num:%d,max_age:%f,min_age:%f",keyClass,classNum,maxAge.getValue(),minAge.getValue());
 				System.out.println(formated);
+				
 			}
 		}
 	}
