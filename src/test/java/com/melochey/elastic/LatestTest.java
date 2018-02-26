@@ -21,7 +21,7 @@ public class LatestTest {
 		// GenerateField eskv = new GenerateField("firstname","melo2",2);
 		String[] fields = new String[] { "age", "height" };
 		param.searchedFields = fields;
-		RangeField range = new RangeField("age", 12, true, 30, true, 3);
+		RangeField range = new RangeField("age", 12, true, 30, true, ESQ);
 		param.getFieldList().add(range);
 		param.sortKeys.put("age", true);
 		param.sortKeys.put("height", false);

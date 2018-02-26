@@ -6,7 +6,7 @@ public class RangeField extends BaseField {
 	private Object upperValue;
 	private boolean includeUpper;
 
-	public RangeField(String fieldName, Object lower, boolean includeLower, Object upper, boolean includeUpper,int flag) {
+	public RangeField(String fieldName, Object lower, boolean includeLower, Object upper, boolean includeUpper,ESQueryType flag) {
 		this.fieldName = fieldName;
 		this.lowerValue = lower;
 		this.includeLower = includeLower;

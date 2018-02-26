@@ -27,12 +27,14 @@ public class MainTest {
 
 	@Test
 	public void initData() {
+		String[] categorys = new String[]{"class1","class2","class3","class4","class5"};
 		for (int i = 0; i < 1000; i++) {
 			Document document = new Document();
 			Random random = new Random();
 			int randNum = random.nextInt(10000);
 			document.setFirstname("melo" + randNum);
 			document.setLastname("sdf" + randNum);
+			document.setCategory(categorys[random.nextInt(5)]);
 			document.setMessage("test value");
 			document.setAge(random.nextInt(100));
 			document.setHeight(random.nextInt(200));

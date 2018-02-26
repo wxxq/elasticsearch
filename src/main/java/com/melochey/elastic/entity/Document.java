@@ -7,6 +7,7 @@ public class Document {
     private String message;
     private int age;
     private int height;
+    private String category;
 	public String getFirstname() {
 		return firstname;
 	}
@@ -43,4 +44,11 @@ public class Document {
 	public void setAge(int age) {
 		this.age = age;
 	}
+	public String getCategory() {
+		return category;
+	}
+	public void setCategory(String category) {
+		this.category = category;
+	}
+	
 }
