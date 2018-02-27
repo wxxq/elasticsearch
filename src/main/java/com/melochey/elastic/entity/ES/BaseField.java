@@ -2,10 +2,12 @@ package com.melochey.elastic.entity.ES;
 
 public class BaseField {
 	
-	public String fieldName;
+	protected String fieldName;
 
-	// 0 termQuery 1 matchQuery 2 rangeQuery
-	public ESQueryType flag;
+	public ESQueryType flag ;
+	
+	// default filter
+	public ESSearchType searchType = ESSearchType.FILTER;
 
 	public String getFieldName() {
 		return fieldName;
@@ -13,6 +15,22 @@ public class BaseField {
 
 	public void setFieldName(String fieldName) {
 		this.fieldName = fieldName;
+	}
+
+	public ESSearchType getSearchType() {
+		return searchType;
+	}
+
+	public void setSearchType(ESSearchType searchType) {
+		this.searchType = searchType;
+	}
+
+	public ESQueryType getFlag() {
+		return flag;
+	}
+
+	public void setFlag(ESQueryType flag) {
+		this.flag = flag;
 	}
 
 	

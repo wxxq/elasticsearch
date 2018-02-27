@@ -16,9 +16,13 @@ import com.google.gson.Gson;
 import com.melochey.elastic.dao.ESQueryWrapper;
 import com.melochey.elastic.entity.Document;
 import com.melochey.elastic.entity.Index;
+import com.melochey.elastic.entity.ES.BaseField;
+import com.melochey.elastic.entity.ES.BoolField;
 import com.melochey.elastic.entity.ES.ESMetrics;
 import com.melochey.elastic.entity.ES.ESParam;
 import com.melochey.elastic.entity.ES.ESQueryType;
+import com.melochey.elastic.entity.ES.ESSearchType;
+import com.melochey.elastic.entity.ES.GenerateField;
 import com.melochey.elastic.entity.ES.RangeField;
 import com.melochey.elastic.util.ESConnector;
 import com.melochey.elastic.util.ESResponseParse;
@@ -44,8 +48,48 @@ public class LatestTest {
 		String json = ESResponseParse.parseJsonFromResponse(response);
 		System.out.println(json.toString());
 	}
-
+	
+//	@Test
+	public void queryTest2(){
+		ESParam param = new ESParam();
+		param.fieldList = new ArrayList<>();
+		List<BaseField> list= new ArrayList<>();
+		GenerateField g = new GenerateField("school", "school3", ESQueryType.TERM);
+		GenerateField g2 = new GenerateField("school", "school5", ESQueryType.TERM);
+		g2.setSearchType(ESSearchType.SHOULD);
+		RangeField r = new RangeField("age",  12, true, null, false, ESQueryType.RANGE);
+		list.add(g);
+		list.add(r);
+		BoolField b = new BoolField();
+		b.setChildBool(list);
+		b.setFlag(ESQueryType.BOOL);
+		param.fieldList.add(b);
+		param.fieldList.add(g2);
+		SearchResponse response = dao.commonQuery(param);
+		String json = ESResponseParse.parseJsonFromResponse(response);
+		System.out.println(json.toString());
+	}
+	
 	@Test
+	public  void queryTest3(){
+		ESParam param = new ESParam();
+		param.setSize(100);
+		param.fieldList = new ArrayList<>();
+		GenerateField g = new GenerateField("category", "class3", ESQueryType.TERM);
+		g.setSearchType(ESSearchType.SHOULD);
+		GenerateField g2 = new GenerateField("category", "class2", ESQueryType.TERM);
+		g2.setSearchType(ESSearchType.SHOULD);
+		GenerateField g3 = new GenerateField("school", "school1", ESQueryType.TERM);
+		g3.setSearchType(ESSearchType.MUST);
+		param.fieldList.add(g);
+		param.fieldList.add(g2);
+		param.fieldList.add(g3);
+		SearchResponse response = dao.commonQuery(param);
+		String json = ESResponseParse.parseJsonFromResponse(response);
+		System.out.println(json.toString());
+	}
+
+//	@Test
 	public void aggretationQueryTest() {
 		ESParam param = new ESParam();
 		param.aggregationFields = new ArrayList<>();

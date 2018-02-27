@@ -9,8 +9,11 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.MatchQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
+import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.Aggregation;
@@ -39,6 +42,7 @@ import org.json.JSONObject;
 
 import com.melochey.elastic.entity.Index;
 import com.melochey.elastic.entity.ES.BaseField;
+import com.melochey.elastic.entity.ES.BoolField;
 import com.melochey.elastic.entity.ES.ESMetrics;
 import com.melochey.elastic.entity.ES.ESParam;
 import com.melochey.elastic.entity.ES.GenerateField;
@@ -71,19 +75,9 @@ public class ESQueryWrapper<T> {
 						.order(param.sortKeys.get(key) ? SortOrder.ASC : SortOrder.DESC);
 				searchSourceBuilder.sort(fieldSort);
 			}
+		}else{
+			searchSourceBuilder.sort(SortBuilders.scoreSort());
 		}
-	}
-
-	public SearchResponse searchedResponse(SearchSourceBuilder searchSourceBuilder) {
-		SearchRequest searchRequest = new SearchRequest(index.getName());
-		searchRequest.source(searchSourceBuilder);
-		SearchResponse searchResponse = null;
-		try {
-			searchResponse = client.search(searchRequest);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return searchResponse;
 	}
 
 	public SearchResponse commonQuery(ESParam param) {
@@ -91,33 +85,59 @@ public class ESQueryWrapper<T> {
 		// 设置排序字段
 		wrapperBuilder(searchSourceBuilder, param);
 		// 装载查询参数
-		BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+
 		List<BaseField> fieldList = param.getFieldList();
-		if (fieldList != null) {
-			for (BaseField eskv : fieldList) {
-				switch (eskv.flag) {
-				case TERM:
-					boolQuery.filter(
-							QueryBuilders.termQuery(eskv.getFieldName(), ((GenerateField) eskv).getFieldValue()));
-					break;
-				case MATCH:
-					boolQuery.filter(
-							QueryBuilders.matchQuery(eskv.getFieldName(), ((GenerateField) eskv).getFieldValue()));
-					break;
-				case RANGE:
-					RangeQueryBuilder rangeQuery = QueryBuilders.rangeQuery(eskv.getFieldName());
-					rangeQuery.from(((RangeField) eskv).getLowerValue(), ((RangeField) eskv).isIncludeLower());
-					rangeQuery.to(((RangeField) eskv).getUpperValue(), ((RangeField) eskv).isIncludeUpper());
-					boolQuery.filter(rangeQuery);
-					break;
-				}
-			}
-		}
+
 		// 传入 查询参数
-		searchSourceBuilder.query(boolQuery);
+		if (fieldList != null) {
+			searchSourceBuilder.query(wrapperBoolQuery(fieldList));
+		}
 		// 传入聚合条件
 		addAggregationQuery(searchSourceBuilder, param);
 		return search(searchSourceBuilder);
+	}
+
+	public BoolQueryBuilder wrapperBoolQuery(List<BaseField> fieldList) {
+		BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+		for (BaseField eskv : fieldList) {
+			QueryBuilder tempQueryBuilder = null;
+			switch (eskv.flag) {
+			case TERM:
+				tempQueryBuilder = QueryBuilders.termQuery(eskv.getFieldName(), ((GenerateField) eskv).getFieldValue());
+				break;
+			case MATCH:
+				tempQueryBuilder = QueryBuilders.matchQuery(eskv.getFieldName(),
+						((GenerateField) eskv).getFieldValue());
+				break;
+			case RANGE:
+				RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery(eskv.getFieldName());
+				rangeQueryBuilder.from(((RangeField) eskv).getLowerValue(), ((RangeField) eskv).isIncludeLower());
+				rangeQueryBuilder.to(((RangeField) eskv).getUpperValue(), ((RangeField) eskv).isIncludeUpper());
+				tempQueryBuilder = rangeQueryBuilder;
+				break;
+			case BOOL:
+				List<BaseField> fieldList2 = ((BoolField) eskv).getChildBool();
+				QueryBuilder boolQueryBuilder = wrapperBoolQuery(fieldList2);
+				tempQueryBuilder = boolQueryBuilder;
+				break;
+			}
+			switch (eskv.searchType) {
+			case MUST:
+				boolQuery.must(tempQueryBuilder);
+				break;
+			case MUST_NOT:
+				boolQuery.mustNot(tempQueryBuilder);
+				break;
+			case FILTER:
+				boolQuery.filter(tempQueryBuilder);
+				break;
+			case SHOULD:
+				boolQuery.should(tempQueryBuilder);
+				break;
+			}
+
+		}
+		return boolQuery;
 	}
 
 	public SearchResponse search(SearchSourceBuilder searchSourceBuilder) {
@@ -144,7 +164,7 @@ public class ESQueryWrapper<T> {
 		aggregation.subAggregation(maxAggregation);
 		aggregation.subAggregation(minAggregation);
 		searchSourceBuilder.aggregation(aggregation);
-		SearchResponse searchResponse = searchedResponse(searchSourceBuilder);
+		SearchResponse searchResponse = search(searchSourceBuilder);
 		Aggregations aggregations = searchResponse.getAggregations();
 		Terms terms = aggregations.get("count_age");
 		List<? extends Bucket> buckets = terms.getBuckets();
@@ -166,7 +186,7 @@ public class ESQueryWrapper<T> {
 		classAggregation.subAggregation(ageAggregation);
 		ageAggregation.subAggregation(avgHeightAggregation);
 		searchSourceBuilder.aggregation(classAggregation);
-		SearchResponse searchResponse = searchedResponse(searchSourceBuilder);
+		SearchResponse searchResponse = search(searchSourceBuilder);
 		Aggregations aggregations = searchResponse.getAggregations();
 		Terms terms = aggregations.get("term_class");
 		List<? extends Bucket> buckets = terms.getBuckets();
@@ -193,7 +213,7 @@ public class ESQueryWrapper<T> {
 			for (int i = 1; i < fields.size(); i++) {
 				TermsAggregationBuilder itemAggregation = AggregationBuilders.terms("term_" + fields.get(i))
 						.field(fields.get(i));
-				//itemAggregation.size(100);
+				// itemAggregation.size(100);
 				curAggregation.subAggregation(itemAggregation);
 				curAggregation = itemAggregation;
 			}
@@ -201,7 +221,7 @@ public class ESQueryWrapper<T> {
 				Map<String, ESMetrics[]> metrics = param.aggregationMetrics;
 				for (String f : metrics.keySet()) {
 					ESMetrics[] metricArray = metrics.get(f);
-					for(int i=0;i<metricArray.length;i++){
+					for (int i = 0; i < metricArray.length; i++) {
 						switch (metricArray[i]) {
 						case MAX:
 							MaxAggregationBuilder maxAggregationBuilder = AggregationBuilders.max("max_" + f).field(f);
@@ -220,11 +240,13 @@ public class ESQueryWrapper<T> {
 							curAggregation.subAggregation(minAggregationBuilder);
 							break;
 						case CARDINALITY:
-							CardinalityAggregationBuilder cardinalityAggregationBuilder = AggregationBuilders.cardinality("cardinality_"+f).field(f);
+							CardinalityAggregationBuilder cardinalityAggregationBuilder = AggregationBuilders
+									.cardinality("cardinality_" + f).field(f);
 							curAggregation.subAggregation(cardinalityAggregationBuilder);
 							break;
 						case STATS:
-							StatsAggregationBuilder statsAggregationBuilder = AggregationBuilders.stats("stats_"+f).field(f);
+							StatsAggregationBuilder statsAggregationBuilder = AggregationBuilders.stats("stats_" + f)
+									.field(f);
 							curAggregation.subAggregation(statsAggregationBuilder);
 						}
 					}

@@ -10,14 +10,6 @@ public class GenerateField extends BaseField {
 		this.flag = flag;
 	}
 
-	public String getFieldName() {
-		return fieldName;
-	}
-
-	public void setFieldName(String fieldName) {
-		this.fieldName = fieldName;
-	}
-
 	public Object getFieldValue() {
 		return fieldValue;
 	}
@@ -25,6 +17,5 @@ public class GenerateField extends BaseField {
 	public void setFieldValue(Object fieldValue) {
 		this.fieldValue = fieldValue;
 	}
-
 
 }

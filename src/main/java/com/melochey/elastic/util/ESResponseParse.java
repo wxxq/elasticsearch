@@ -14,7 +14,9 @@ public class ESResponseParse {
 		obj.put("totalSize", totalSize);
 		JSONArray arr = new JSONArray();
 		for (SearchHit hit : hits) {
-			arr.put(hit.getSourceAsString());
+			String resultStr=hit.getSourceAsString();
+			JSONObject item = new JSONObject(resultStr);
+			arr.put(item);
 		}
 		obj.put("documents", arr);
 		return obj.toString();
