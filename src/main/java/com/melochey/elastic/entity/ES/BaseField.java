@@ -8,6 +8,11 @@ public class BaseField {
 	
 	// default filter
 	public ESSearchType searchType = ESSearchType.FILTER;
+	
+	public BaseField(String fieldName,ESQueryType flag){
+		this.fieldName = fieldName;
+		this.flag = flag;
+	}
 
 	public String getFieldName() {
 		return fieldName;

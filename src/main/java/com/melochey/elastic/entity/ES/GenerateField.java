@@ -5,9 +5,8 @@ public class GenerateField extends BaseField {
 	private Object fieldValue;
 
 	public GenerateField(String fieldName, Object fieldValue, ESQueryType flag) {
-		this.fieldName = fieldName;
+		super(fieldName,flag);
 		this.fieldValue = fieldValue;
-		this.flag = flag;
 	}
 
 	public Object getFieldValue() {

@@ -6,6 +6,9 @@ public class BoolField extends BaseField {
 	
 	private List<BaseField> childBool;
 
+	public BoolField(){
+		super("",ESQueryType.BOOL);
+	}
 	
 	public List<BaseField> getChildBool() {
 		return childBool;

@@ -43,6 +43,7 @@ import org.json.JSONObject;
 import com.melochey.elastic.entity.Index;
 import com.melochey.elastic.entity.ES.BaseField;
 import com.melochey.elastic.entity.ES.BoolField;
+import com.melochey.elastic.entity.ES.CollectionField;
 import com.melochey.elastic.entity.ES.ESMetrics;
 import com.melochey.elastic.entity.ES.ESParam;
 import com.melochey.elastic.entity.ES.GenerateField;
@@ -75,7 +76,7 @@ public class ESQueryWrapper<T> {
 						.order(param.sortKeys.get(key) ? SortOrder.ASC : SortOrder.DESC);
 				searchSourceBuilder.sort(fieldSort);
 			}
-		}else{
+		} else {
 			searchSourceBuilder.sort(SortBuilders.scoreSort());
 		}
 	}
@@ -105,6 +106,12 @@ public class ESQueryWrapper<T> {
 			case TERM:
 				tempQueryBuilder = QueryBuilders.termQuery(eskv.getFieldName(), ((GenerateField) eskv).getFieldValue());
 				break;
+			case TERMS:
+				tempQueryBuilder = QueryBuilders.termsQuery(eskv.getFieldName(), ((CollectionField) eskv).getFieldCollection());
+				break;
+			case EXIST:
+				tempQueryBuilder = QueryBuilders.existsQuery(eskv.getFieldName());
+				break;
 			case MATCH:
 				tempQueryBuilder = QueryBuilders.matchQuery(eskv.getFieldName(),
 						((GenerateField) eskv).getFieldValue());
@@ -120,6 +127,8 @@ public class ESQueryWrapper<T> {
 				QueryBuilder boolQueryBuilder = wrapperBoolQuery(fieldList2);
 				tempQueryBuilder = boolQueryBuilder;
 				break;
+			default:
+				break;
 			}
 			switch (eskv.searchType) {
 			case MUST:
@@ -132,7 +141,7 @@ public class ESQueryWrapper<T> {
 				boolQuery.filter(tempQueryBuilder);
 				break;
 			case SHOULD:
-				boolQuery.should(tempQueryBuilder);
+				boolQuery.should(tempQueryBuilder).minimumShouldMatch(1);
 				break;
 			}
 

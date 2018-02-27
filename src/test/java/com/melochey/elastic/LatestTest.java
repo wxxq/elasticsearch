@@ -38,7 +38,7 @@ public class LatestTest {
 		ESParam param = new ESParam();
 		String[] fields = new String[] { "age", "height" };
 		param.searchedFields = fields;
-		RangeField range = new RangeField("age", 12, true, 30, true, ESQueryType.RANGE);
+		RangeField range = new RangeField("age", 12, true, 30, true);
 		param.fieldList = new ArrayList<>();
 		param.sortKeys = new HashMap<>();
 		param.getFieldList().add(range);
@@ -49,20 +49,22 @@ public class LatestTest {
 		System.out.println(json.toString());
 	}
 	
-//	@Test
+	@Test
 	public void queryTest2(){
 		ESParam param = new ESParam();
+		param.setSize(100);
 		param.fieldList = new ArrayList<>();
 		List<BaseField> list= new ArrayList<>();
 		GenerateField g = new GenerateField("school", "school3", ESQueryType.TERM);
 		GenerateField g2 = new GenerateField("school", "school5", ESQueryType.TERM);
 		g2.setSearchType(ESSearchType.SHOULD);
-		RangeField r = new RangeField("age",  12, true, null, false, ESQueryType.RANGE);
+		RangeField r = new RangeField("age",  80, true, null, false);
 		list.add(g);
 		list.add(r);
 		BoolField b = new BoolField();
 		b.setChildBool(list);
 		b.setFlag(ESQueryType.BOOL);
+		b.setSearchType(ESSearchType.SHOULD);
 		param.fieldList.add(b);
 		param.fieldList.add(g2);
 		SearchResponse response = dao.commonQuery(param);
@@ -70,7 +72,7 @@ public class LatestTest {
 		System.out.println(json.toString());
 	}
 	
-	@Test
+//	@Test
 	public  void queryTest3(){
 		ESParam param = new ESParam();
 		param.setSize(100);
