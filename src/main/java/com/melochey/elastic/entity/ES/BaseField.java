@@ -6,6 +6,9 @@ public class BaseField {
 
 	public ESQueryType flag ;
 	
+	private float boost = 1.0f;
+
+	
 	// default filter
 	public ESSearchType searchType = ESSearchType.FILTER;
 	
@@ -24,6 +27,14 @@ public class BaseField {
 
 	public ESSearchType getSearchType() {
 		return searchType;
+	}
+
+	public float getBoost() {
+		return boost;
+	}
+
+	public void setBoost(float boost) {
+		this.boost = boost;
 	}
 
 	public void setSearchType(ESSearchType searchType) {

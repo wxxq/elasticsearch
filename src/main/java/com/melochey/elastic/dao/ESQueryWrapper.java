@@ -47,6 +47,7 @@ import com.melochey.elastic.entity.ES.CollectionField;
 import com.melochey.elastic.entity.ES.ESMetrics;
 import com.melochey.elastic.entity.ES.ESParam;
 import com.melochey.elastic.entity.ES.GenerateField;
+import com.melochey.elastic.entity.ES.MatchField;
 import com.melochey.elastic.entity.ES.RangeField;
 
 import static java.lang.String.format;
@@ -98,6 +99,7 @@ public class ESQueryWrapper<T> {
 		return search(searchSourceBuilder);
 	}
 
+	
 	public BoolQueryBuilder wrapperBoolQuery(List<BaseField> fieldList) {
 		BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
 		for (BaseField eskv : fieldList) {
@@ -107,24 +109,32 @@ public class ESQueryWrapper<T> {
 				tempQueryBuilder = QueryBuilders.termQuery(eskv.getFieldName(), ((GenerateField) eskv).getFieldValue());
 				break;
 			case TERMS:
-				tempQueryBuilder = QueryBuilders.termsQuery(eskv.getFieldName(), ((CollectionField) eskv).getFieldCollection());
+				tempQueryBuilder = QueryBuilders.termsQuery(eskv.getFieldName(),
+						((CollectionField) eskv).getFieldCollection());
 				break;
 			case EXIST:
 				tempQueryBuilder = QueryBuilders.existsQuery(eskv.getFieldName());
 				break;
 			case MATCH:
-				tempQueryBuilder = QueryBuilders.matchQuery(eskv.getFieldName(),
-						((GenerateField) eskv).getFieldValue());
+				MatchField matchField = (MatchField) eskv;
+				MatchQueryBuilder matchQueryBuilder = QueryBuilders.matchQuery(eskv.getFieldName(),
+						matchField.getFieldValue());
+				matchQueryBuilder.operator(matchField.getOperator());
+				matchQueryBuilder.minimumShouldMatch(matchField.getMinimum_should_match());
+				matchQueryBuilder.boost(matchField.getBoost());
+				matchQueryBuilder.type(matchField.getType());
+				tempQueryBuilder = matchQueryBuilder;
 				break;
 			case RANGE:
+				RangeField rangeField = (RangeField) eskv;
 				RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery(eskv.getFieldName());
-				rangeQueryBuilder.from(((RangeField) eskv).getLowerValue(), ((RangeField) eskv).isIncludeLower());
-				rangeQueryBuilder.to(((RangeField) eskv).getUpperValue(), ((RangeField) eskv).isIncludeUpper());
+				rangeQueryBuilder.from(rangeField.getLowerValue(), rangeField.isIncludeLower());
+				rangeQueryBuilder.to(rangeField.getUpperValue(), rangeField.isIncludeUpper());
 				tempQueryBuilder = rangeQueryBuilder;
 				break;
 			case BOOL:
-				List<BaseField> fieldList2 = ((BoolField) eskv).getChildBool();
-				QueryBuilder boolQueryBuilder = wrapperBoolQuery(fieldList2);
+				List<BaseField> childFieldList = ((BoolField) eskv).getChildBool();
+				QueryBuilder boolQueryBuilder = wrapperBoolQuery(childFieldList);
 				tempQueryBuilder = boolQueryBuilder;
 				break;
 			default:
