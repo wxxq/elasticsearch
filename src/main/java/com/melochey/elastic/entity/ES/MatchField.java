@@ -26,7 +26,10 @@ public class MatchField extends BaseField {
 	public MatchField(String fieldName) {
 		super(fieldName, ESQueryType.MATCH);
 	}
-
+	
+	public MatchField(String fieldName,ESSearchType searchType) {
+		super(fieldName, ESQueryType.MATCH,searchType);
+	}
 
 	public Operator getOperator() {
 		return operator;

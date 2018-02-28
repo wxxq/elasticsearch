@@ -9,6 +9,12 @@ public class CollectionField extends BaseField{
 		super(fieldName,flag);
 		this.fieldCollection = fieldCollection;
 	}
+	
+	public CollectionField(String fieldName, List<Object> fieldCollection, ESQueryType flag,ESSearchType searchType){
+		super(fieldName,flag);
+		this.fieldCollection = fieldCollection;
+		this.searchType = searchType;
+	}
 
 	public List<Object> getFieldCollection() {
 		return fieldCollection;

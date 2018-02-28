@@ -16,6 +16,12 @@ public class BaseField {
 		this.fieldName = fieldName;
 		this.flag = flag;
 	}
+	
+	public BaseField(String fieldName,ESQueryType flag,ESSearchType searchType){
+		this.fieldName = fieldName;
+		this.flag = flag;
+		this.searchType = searchType;
+	}
 
 	public String getFieldName() {
 		return fieldName;

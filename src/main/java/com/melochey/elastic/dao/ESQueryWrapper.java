@@ -46,7 +46,7 @@ import com.melochey.elastic.entity.ES.BoolField;
 import com.melochey.elastic.entity.ES.CollectionField;
 import com.melochey.elastic.entity.ES.ESMetrics;
 import com.melochey.elastic.entity.ES.ESParam;
-import com.melochey.elastic.entity.ES.GenerateField;
+import com.melochey.elastic.entity.ES.TermField;
 import com.melochey.elastic.entity.ES.MatchField;
 import com.melochey.elastic.entity.ES.RangeField;
 
@@ -106,7 +106,7 @@ public class ESQueryWrapper<T> {
 			QueryBuilder tempQueryBuilder = null;
 			switch (eskv.flag) {
 			case TERM:
-				tempQueryBuilder = QueryBuilders.termQuery(eskv.getFieldName(), ((GenerateField) eskv).getFieldValue());
+				tempQueryBuilder = QueryBuilders.termQuery(eskv.getFieldName(), ((TermField) eskv).getFieldValue());
 				break;
 			case TERMS:
 				tempQueryBuilder = QueryBuilders.termsQuery(eskv.getFieldName(),

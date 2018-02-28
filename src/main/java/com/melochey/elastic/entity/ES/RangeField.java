@@ -13,6 +13,14 @@ public class RangeField extends BaseField {
 		this.upperValue = upper;
 		this.includeUpper = includeUpper;
 	}
+	
+	public RangeField(String fieldName, Object lower, boolean includeLower, Object upper, boolean includeUpper,ESSearchType searchType) {
+		super(fieldName,ESQueryType.RANGE,searchType);
+		this.lowerValue = lower;
+		this.includeLower = includeLower;
+		this.upperValue = upper;
+		this.includeUpper = includeUpper;
+	}
 
 	public Object getLowerValue() {
 		return lowerValue;

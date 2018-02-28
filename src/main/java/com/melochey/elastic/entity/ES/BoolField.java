@@ -6,8 +6,13 @@ public class BoolField extends BaseField {
 	
 	private List<BaseField> childBool;
 
-	public BoolField(){
+	public BoolField(List<BaseField> list){
 		super("",ESQueryType.BOOL);
+		this.childBool = list;
+	}
+	
+	public BoolField(List<BaseField> list,ESSearchType searchType){
+		super("",ESQueryType.BOOL,searchType);
 	}
 	
 	public List<BaseField> getChildBool() {

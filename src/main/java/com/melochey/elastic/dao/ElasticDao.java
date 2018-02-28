@@ -32,7 +32,7 @@ import com.melochey.elastic.entity.Document;
 import com.melochey.elastic.entity.Index;
 import com.melochey.elastic.entity.ES.BaseField;
 import com.melochey.elastic.entity.ES.ESParam;
-import com.melochey.elastic.entity.ES.GenerateField;
+import com.melochey.elastic.entity.ES.TermField;
 import com.melochey.elastic.entity.ES.RangeField;
 /**
  * ElasticSearchClientWrapper
