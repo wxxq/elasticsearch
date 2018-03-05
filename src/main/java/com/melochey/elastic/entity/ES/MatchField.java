@@ -6,29 +6,29 @@ import org.elasticsearch.index.search.MatchQuery.Type;
 public class MatchField extends BaseField {
 
 	private Operator operator = Operator.OR;
-	
+
 	private String minimum_should_match = "1";
 
-	private String fieldValue;
-	
 	private Type type = Type.BOOLEAN;
-	
+
 	public Type getType() {
 		return type;
 	}
-
 
 	public void setType(Type type) {
 		this.type = type;
 	}
 
-
-	public MatchField(String fieldName) {
-		super(fieldName, ESQueryType.MATCH);
+	public MatchField(String fieldName, Object fieldValue) {
+		super(fieldName, fieldValue, ESQueryType.MATCH);
 	}
-	
-	public MatchField(String fieldName,ESSearchType searchType) {
-		super(fieldName, ESQueryType.MATCH,searchType);
+
+	public MatchField(String fieldName, Object fieldValue, ESQueryType type) {
+		super(fieldName, fieldValue, type);
+	}
+
+	public MatchField(String fieldName, Object fieldValue, ESSearchType searchType) {
+		super(fieldName, fieldValue, ESQueryType.MATCH, searchType);
 	}
 
 	public Operator getOperator() {
@@ -47,14 +47,4 @@ public class MatchField extends BaseField {
 		this.minimum_should_match = minimum_should_match;
 	}
 
-
-	public String getFieldValue() {
-		return fieldValue;
-	}
-
-
-	public void setFieldValue(String fieldValue) {
-		this.fieldValue = fieldValue;
-	}
-	
 }

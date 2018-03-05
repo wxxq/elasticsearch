@@ -1,6 +1,5 @@
 package com.melochey.elastic.entity.ES;
 
 public enum ESQueryType {
-	// 0 termQuery 1 matchQuery 2 rangeQuery
-	TERM, TERMS, MATCH, RANGE, BOOL ,EXIST;
+	TERM, TERMS, MATCH, MUITL_MATCH, RANGE, BOOL, EXIST, WILDCARD, PREFIX, REGEXP, FUZZY;
 }

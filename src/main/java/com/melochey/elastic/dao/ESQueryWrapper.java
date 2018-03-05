@@ -10,10 +10,14 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
+import org.elasticsearch.index.query.MultiMatchQueryBuilder;
+import org.elasticsearch.index.query.PrefixQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
+import org.elasticsearch.index.query.RegexpQueryBuilder;
 import org.elasticsearch.index.query.TermQueryBuilder;
+import org.elasticsearch.index.query.WildcardQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.Aggregation;
@@ -48,6 +52,8 @@ import com.melochey.elastic.entity.ES.ESMetrics;
 import com.melochey.elastic.entity.ES.ESParam;
 import com.melochey.elastic.entity.ES.TermField;
 import com.melochey.elastic.entity.ES.MatchField;
+import com.melochey.elastic.entity.ES.MutilMatchField;
+import com.melochey.elastic.entity.ES.PartField;
 import com.melochey.elastic.entity.ES.RangeField;
 
 import static java.lang.String.format;
@@ -104,20 +110,32 @@ public class ESQueryWrapper<T> {
 		BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
 		for (BaseField eskv : fieldList) {
 			QueryBuilder tempQueryBuilder = null;
+			String key = eskv.getFieldName() ;
 			switch (eskv.flag) {
 			case TERM:
-				tempQueryBuilder = QueryBuilders.termQuery(eskv.getFieldName(), ((TermField) eskv).getFieldValue());
+				tempQueryBuilder = QueryBuilders.termQuery(key, ((TermField) eskv).getFieldValue());
 				break;
 			case TERMS:
-				tempQueryBuilder = QueryBuilders.termsQuery(eskv.getFieldName(),
+				tempQueryBuilder = QueryBuilders.termsQuery(key,
 						((CollectionField) eskv).getFieldCollection());
 				break;
+			case MUITL_MATCH:
+				MutilMatchField mutilField = (MutilMatchField)eskv;
+				MultiMatchQueryBuilder multiMatchQueryBuilder = QueryBuilders.multiMatchQuery(mutilField.getFieldValue(),mutilField.getMutilFields());
+				multiMatchQueryBuilder.operator(mutilField.getOperator());
+				multiMatchQueryBuilder.minimumShouldMatch(mutilField.getMinimum_should_match());
+				multiMatchQueryBuilder.boost(mutilField.getBoost());
+				multiMatchQueryBuilder.type(mutilField.getType());
+				tempQueryBuilder = multiMatchQueryBuilder;
+				break;
+			case FUZZY:
+				break;
 			case EXIST:
-				tempQueryBuilder = QueryBuilders.existsQuery(eskv.getFieldName());
+				tempQueryBuilder = QueryBuilders.existsQuery(key);
 				break;
 			case MATCH:
 				MatchField matchField = (MatchField) eskv;
-				MatchQueryBuilder matchQueryBuilder = QueryBuilders.matchQuery(eskv.getFieldName(),
+				MatchQueryBuilder matchQueryBuilder = QueryBuilders.matchQuery(key,
 						matchField.getFieldValue());
 				matchQueryBuilder.operator(matchField.getOperator());
 				matchQueryBuilder.minimumShouldMatch(matchField.getMinimum_should_match());
@@ -125,9 +143,24 @@ public class ESQueryWrapper<T> {
 				matchQueryBuilder.type(matchField.getType());
 				tempQueryBuilder = matchQueryBuilder;
 				break;
+			case WILDCARD:
+				PartField wildPartField = (PartField) eskv;
+				WildcardQueryBuilder wildQueryBuilder = QueryBuilders.wildcardQuery(key,wildPartField.getValue());
+				tempQueryBuilder = wildQueryBuilder;
+				break;
+			case PREFIX:
+				PartField prefixPartField = (PartField) eskv;
+				PrefixQueryBuilder prefixQueryBuilder = QueryBuilders.prefixQuery(key, prefixPartField.getValue());
+				tempQueryBuilder = prefixQueryBuilder;
+				break;
+			case REGEXP:
+				PartField regexpPartField = (PartField) eskv;
+				RegexpQueryBuilder regexpQueryBuilder = QueryBuilders.regexpQuery(key, regexpPartField.getValue());
+				tempQueryBuilder = regexpQueryBuilder;
+				break;
 			case RANGE:
 				RangeField rangeField = (RangeField) eskv;
-				RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery(eskv.getFieldName());
+				RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery(key);
 				rangeQueryBuilder.from(rangeField.getLowerValue(), rangeField.isIncludeLower());
 				rangeQueryBuilder.to(rangeField.getUpperValue(), rangeField.isIncludeUpper());
 				tempQueryBuilder = rangeQueryBuilder;
