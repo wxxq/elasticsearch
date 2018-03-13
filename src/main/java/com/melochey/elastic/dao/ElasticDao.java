@@ -39,7 +39,7 @@ import com.melochey.elastic.entity.ES.RangeField;
  * @author chey
  *
  */
-public class ElasticDao {
+public class ElasticDao<T> {
 	private static Logger log = Logger.getLogger(ElasticDao.class);
 	private final RestHighLevelClient client;
 	private SearchSourceBuilder sourceBuilder;
@@ -53,7 +53,7 @@ public class ElasticDao {
 		this.gson = gson;
 	}
 
-	public String createIndex(Index index, Document document) {
+	public String createIndex(Index index, T document) {
 		IndexRequest request = new IndexRequest(index.getName(), index.getType());
 		request.source(gson.toJson(document), XContentType.JSON);
 		IndexResponse response;

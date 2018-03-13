@@ -7,7 +7,7 @@ import org.elasticsearch.client.RestHighLevelClient;
 
 public class ESConnector {
 	//192.168.133.130
-	public final static String SERVER_IP = "172.16.24.208";
+	public final static String SERVER_IP = "192.168.133.130";
 	
 	public final static int SERVER_PORT = 9200;
 	

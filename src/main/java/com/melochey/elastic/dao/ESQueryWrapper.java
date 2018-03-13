@@ -143,6 +143,9 @@ public class ESQueryWrapper<T> {
 				matchQueryBuilder.type(matchField.getType());
 				tempQueryBuilder = matchQueryBuilder;
 				break;
+			case MATCH_PHRASE:
+				tempQueryBuilder = QueryBuilders.matchPhraseQuery(eskv.getFieldName(), eskv.getFieldValue());
+				break;
 			case WILDCARD:
 				PartField wildPartField = (PartField) eskv;
 				WildcardQueryBuilder wildQueryBuilder = QueryBuilders.wildcardQuery(key,wildPartField.getValue());

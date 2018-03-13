@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.search.MatchQuery.Type;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
@@ -24,6 +25,7 @@ import com.melochey.elastic.entity.ES.ESMetrics;
 import com.melochey.elastic.entity.ES.ESParam;
 import com.melochey.elastic.entity.ES.ESQueryType;
 import com.melochey.elastic.entity.ES.ESSearchType;
+import com.melochey.elastic.entity.ES.MatchField;
 import com.melochey.elastic.entity.ES.PartField;
 import com.melochey.elastic.entity.ES.TermField;
 import com.melochey.elastic.entity.ES.RangeField;
@@ -33,8 +35,10 @@ import com.melochey.elastic.util.ESResponseParse;
 import static java.lang.String.format;
 
 public class LatestTest {
+//	Index index = new Index("pub_health", "health_doc");
 	Index index = new Index("school", "students");
 	ESQueryWrapper<Document> dao = new ESQueryWrapper<Document>(ESConnector.getClient(), index);
+	
 	Gson gson = new Gson();
 
 	// @Test
@@ -72,17 +76,37 @@ public class LatestTest {
 		System.out.println(json.toString());
 	}
 
-	// @Test
+	 @Test
 	public void queryTest3() {
 		ESParam param = new ESParam();
 		param.setSize(100);
 		param.fieldList = new ArrayList<>();
-		TermField g = new TermField("category", "class3", ESSearchType.SHOULD);
-		TermField g2 = new TermField("category", "class2", ESSearchType.SHOULD);
-		TermField g3 = new TermField("school", "school1", ESSearchType.MUST);
+		BaseField matchField = new BaseField("firstname","melo1772",ESQueryType.MATCH_PHRASE,ESSearchType.FILTER);
+//		TermField g = new TermField("category", "class3", ESSearchType.FILTER);
+//		TermField g2 = new TermField("height", "143", ESSearchType.MUST);
+//		TermField g3 = new TermField("age", "36", ESSearchType.MUST);
+//		param.fieldList.add(g);
+//		param.fieldList.add(g2);
+//		param.fieldList.add(g3);
+		param.fieldList.add(matchField);
+		SearchResponse response = dao.commonQuery(param);
+		String json = ESResponseParse.parseJsonFromResponse(response);
+		System.out.println(json.toString());
+	}
+	
+	
+//	@Test
+	public void query4(){
+		ESParam param = new ESParam();
+		param.fieldList = new ArrayList<>();
+		TermField g = new TermField("province_id", 89100000, ESSearchType.FILTER);
+		TermField g2 = new TermField("city_id", 35010000, ESSearchType.FILTER);
+//		TermField g3 = new TermField("district_id", 35010400, ESSearchType.MUST);
+//		TermField g4 = new TermField("phone", "15951570309", ESSearchType.MUST);
 		param.fieldList.add(g);
 		param.fieldList.add(g2);
-		param.fieldList.add(g3);
+//		param.fieldList.add(g3);
+//		param.fieldList.add(g4);
 		SearchResponse response = dao.commonQuery(param);
 		String json = ESResponseParse.parseJsonFromResponse(response);
 		System.out.println(json.toString());
@@ -120,7 +144,7 @@ public class LatestTest {
 		}
 	}
 
-	@Test
+	//@Test
 	public void testPartQuery(){
 		ESParam param = new ESParam();
 		param.setSize(100);

@@ -11,6 +11,7 @@ import org.junit.Test;
 import com.google.gson.Gson;
 import com.melochey.elastic.dao.ElasticDao;
 import com.melochey.elastic.entity.Document;
+import com.melochey.elastic.entity.HealthDoc;
 import com.melochey.elastic.entity.Index;
 import com.melochey.elastic.entity.ES.BaseField;
 import com.melochey.elastic.entity.ES.ESParam;
@@ -20,26 +21,25 @@ import com.melochey.elastic.util.ESConnector;
 import com.google.gson.Gson;
 
 public class MainTest {
-	Index index = new Index("school", "students");
+	Index index = new Index("pub_health", "health_docs");
 	SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
 	Gson gson = new Gson();
-	ElasticDao dao = new ElasticDao(ESConnector.getClient(), sourceBuilder, index, gson);
+	ElasticDao<HealthDoc> dao = new ElasticDao<HealthDoc>(ESConnector.getClient(), sourceBuilder, index, gson);
 
-
-    public static double nextDouble(final double min, final double max)  {
-        if (max < min) {
-            return 0.0;
-        }
-        if (min == max) {
-            return min;
-        }
-        return min + ((max - min) * new Random().nextDouble());
-    }
+	public static double nextDouble(final double min, final double max) {
+		if (max < min) {
+			return 0.0;
+		}
+		if (min == max) {
+			return min;
+		}
+		return min + ((max - min) * new Random().nextDouble());
+	}
 
 	@Test
 	public void initData() {
-		String[] categorys = new String[]{"class1","class2","class3","class4","class5"};
-		String[] school = new String[]{"school1","school2","school3","school4","school5","school6"};
+		String[] categorys = new String[] { "class1", "class2", "class3", "class4", "class5" };
+		String[] school = new String[] { "school1", "school2", "school3", "school4", "school5", "school6" };
 		for (int i = 0; i < 1000; i++) {
 			Document document = new Document();
 			Random random = new Random();
@@ -54,18 +54,28 @@ public class MainTest {
 			document.setProvince_id(random.nextInt(33));
 			document.setCity_id(random.nextInt(330));
 			document.setMoney(MainTest.nextDouble(0.0, 100000.0));
-			dao.createIndex(index, document);
+//			dao.createIndex(index, document);
 		}
 
 	}
-	
-	//@Test
-	public void search(){
+
+	// @Test
+	public void search() {
 		List<Document> list = dao.matchAllQuery();
 		System.out.println(list.size());
-		String result=gson.toJson(list);
+		String result = gson.toJson(list);
 		System.out.println(result);
 	}
-	
 
+	@Test
+	public void add() {
+		for (int i = 0; i < 100000; i++) {
+			HealthDoc doc = new HealthDoc();
+			doc.setProvinceId(new Random().nextLong());
+			doc.setCityId(new Random().nextLong());
+			doc.setDistrictId(new Random().nextLong());
+			doc.setIdCard(String.valueOf(new Random().nextLong()));
+			dao.createIndex(index, doc);
+		}
+	}
 }
